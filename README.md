@@ -10,7 +10,7 @@ Next year I'll try out Rust, perhaps
 ```markdown
 | Day | 1 | 2 | Language |
 |-----|---|---|----------|
-| 01  |   |   |  Python  |
+| 01  | * | * |  Python  |
 ```
 
 
