@@ -11,6 +11,7 @@ Next year I'll try out Rust, perhaps
 | Day | 1 | 2 | Language |
 |-----|---|---|----------|
 | 01  | * | * |  Python  |
+| 02  | * | * |  Python  |
 ```
 
 
