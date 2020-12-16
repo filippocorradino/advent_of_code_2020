@@ -11,9 +11,9 @@ __email__ = "filippo.corradino@gmail.com"
 
 class Graph():
 
-    def __init__(self, nodes=set(), edges={}):
-        self.nodes = nodes
-        self.edges = edges
+    def __init__(self, nodes=None, edges=None):
+        self.nodes = nodes if nodes else set()
+        self.edges = edges if edges else {}
 
     def add_node(self, node):
         self.nodes.add(node)
