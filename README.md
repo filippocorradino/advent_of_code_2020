@@ -18,6 +18,7 @@ Next year I'll try out Rust, perhaps
 | 06  | * | * |  Python  |
 | 07  | * | * |  Python  |
 | 08  | * | * |  Python  |
+| 09  | * | * |  Python  |
 ```
 
 
