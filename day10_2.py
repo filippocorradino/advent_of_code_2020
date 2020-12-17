@@ -15,6 +15,12 @@ from itertools import accumulate, combinations
 from day10_1 import get_adapter_chain_diff
 
 
+def all_combinations(sequence):
+    for r in range(len(sequence)+1):
+        for c in combinations(sequence, r):
+            yield c
+
+
 def main(ifile='inputs/day_10_input.txt'):
     """
     Let the chain of adapters joltage rating be a[i],
@@ -52,16 +58,14 @@ def main(ifile='inputs/day_10_input.txt'):
             # Reconstruct "local" adapters values from a[x] to a[y]
             # We use a local reference so that a[x] = 0
             adapters = [0] + list(accumulate(sub_chain))
-            L = len(adapters)
-            internals = list(range(1, L-1))
-            # We cycle through all combinations of internal adapters and try
+            internals = adapters[1:-1]
+            # We cycle through ALL combinations of internal adapters and try
             # to remove each one from the sub-chain, and see if it's still OK
-            for r in range(L-1):
-                for c in combinations(internals, r):
-                    test_chain = [a for a in adapters if a not in c]
-                    if all((y - x) <= 3
-                           for x, y in zip(test_chain[:-1], test_chain[1:])):
-                        current_combinations += 1
+            for c in all_combinations(internals):
+                test_chain = [a for a in adapters if a not in c]
+                if all((y - x) <= 3
+                        for x, y in zip(test_chain[:-1], test_chain[1:])):
+                    current_combinations += 1
             # Tally up
             total_combinations *= current_combinations
             known_sub_chains[sub_chain_str] = current_combinations
