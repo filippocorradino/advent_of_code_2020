@@ -6,22 +6,20 @@ Next year I'll try out Rust, perhaps
 
 #### Current progress
 
+| Day                                            | Part 1            | Part 2            |
+| ---------------------------------------------- | :---------------: | :---------------: |
+| **[01](https://adventofcode.com/2020/day/1)**  | [⭐](day01_1.py) | [⭐](day01_2.py) |
+| **[02](https://adventofcode.com/2020/day/2)**  | [⭐](day02_1.py) | [⭐](day02_2.py) |
+| **[03](https://adventofcode.com/2020/day/3)**  | [⭐](day03_1.py) | [⭐](day03_2.py) |
+| **[04](https://adventofcode.com/2020/day/4)**  | [⭐](day04_1.py) | [⭐](day04_2.py) |
+| **[05](https://adventofcode.com/2020/day/5)**  | [⭐](day05_1.py) | [⭐](day05_2.py) |
+| **[06](https://adventofcode.com/2020/day/6)**  | [⭐](day06_1.py) | [⭐](day06_2.py) |
+| **[07](https://adventofcode.com/2020/day/7)**  | [⭐](day07_1.py) | [⭐](day07_2.py) |
+| **[08](https://adventofcode.com/2020/day/8)**  | [⭐](day08_1.py) | [⭐](day08_2.py) |
+| **[09](https://adventofcode.com/2020/day/9)**  | [⭐](day09_1.py) | [⭐](day09_2.py) |
+| **[10](https://adventofcode.com/2020/day/10)** | [⭐](day10_1.py) | [⭐](day10_1.py) |
 
-```markdown
-| Day | 1 | 2 | Language |
-|-----|---|---|----------|
-| 01  | * | * |  Python  |
-| 02  | * | * |  Python  |
-| 03  | * | * |  Python  |
-| 04  | * | * |  Python  |
-| 05  | * | * |  Python  |
-| 06  | * | * |  Python  |
-| 07  | * | * |  Python  |
-| 08  | * | * |  Python  |
-| 09  | * | * |  Python  |
-| 10  | * | * |  Python  |
-```
-
+Click on the ⭐ to go to the solution script  
 
 #### Target
 * Simple and readable code, as pythonic as I can make it

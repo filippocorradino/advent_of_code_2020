@@ -36,7 +36,7 @@ def main(ifile='inputs/day_10_input.txt'):
     """
     differences = get_adapter_chain_diff(ifile)
     # Pass from string and split in sub-chains with all d[j] < 3
-    differences_str = ("".join(map(str, differences))) 
+    differences_str = ("".join(map(str, differences)))
     sub_chains_str = [s for s in differences_str.split('3') if s]
     # Count the combinations in each sub-chain and multiply them together
     total_combinations = 1
