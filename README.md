@@ -17,7 +17,7 @@ Next year I'll try out Rust, perhaps
 | **[07](https://adventofcode.com/2020/day/7)**  | [⭐](day07_1.py) | [⭐](day07_2.py) |
 | **[08](https://adventofcode.com/2020/day/8)**  | [⭐](day08_1.py) | [⭐](day08_2.py) |
 | **[09](https://adventofcode.com/2020/day/9)**  | [⭐](day09_1.py) | [⭐](day09_2.py) |
-| **[10](https://adventofcode.com/2020/day/10)** | [⭐](day10_1.py) | [⭐](day10_1.py) |
+| **[10](https://adventofcode.com/2020/day/10)** | [⭐](day10_1.py) | [⭐](day10_2.py) |
 
 Click on the ⭐ to go to the solution script  
 
