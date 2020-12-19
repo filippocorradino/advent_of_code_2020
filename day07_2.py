@@ -15,9 +15,9 @@ from day07_1 import build_suitcase_tree
 
 
 def count_all_branches_weighted(tree, node):
-    branches = [b for a, b in tree.edges if a == node]
+    branches = tree.edges[node].keys()
     if branches:
-        return sum(tree.edges[(node, branch)] *
+        return sum(tree.edges[node][branch] *
                    count_all_branches_weighted(tree, branch)
                    for branch in branches) + 1
         # + 1 because we need to count "node" as well

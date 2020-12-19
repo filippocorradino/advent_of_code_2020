@@ -9,27 +9,37 @@ __author__ = "Filippo Corradino"
 __email__ = "filippo.corradino@gmail.com"
 
 
+import re
+from collections import namedtuple
+
+
 class Graph():
+    """
+    nodes is a dict {node_i: node_i_value}
+    edges is a dict {node_i: {node_j: edge_ij_value}
+    """
 
-    def __init__(self, nodes=None, edges=None):
-        self.nodes = nodes if nodes else set()
-        self.edges = edges if edges else {}
+    def __init__(self):
+        self.nodes = {}
+        self.edges = {}
 
-    def add_node(self, node):
-        self.nodes.add(node)
+    def add_node(self, node, value=None):
+        self.nodes[node] = value
+        self.edges[node] = {}
 
     def add_edge(self, nodeA, nodeB, cost=1, two_ways=False):
-        self.nodes.add(nodeA)
-        self.nodes.add(nodeB)
-        self.edges[(nodeA, nodeB)] = cost
+        for node in (nodeA, nodeB):
+            if node not in self.nodes:
+                self.add_node(node)  # Default to a None-valued node
+        self.edges[nodeA][nodeB] = cost
         if two_ways:
-            self.edges[(nodeB, nodeA)] = cost
+            self.edges[nodeB][nodeA] = cost
 
     def remove_node(self, node):
-        self.nodes.remove(node)
-        edges = (x for x in self.edges if (x[0] == node or x[1] == node))
+        del self.nodes[node]
+        del self.edges[node]
         for edge in edges:
-            del self.edges[edge]
+            edge.pop(node)  # Works also if node is not there
 
     def _find_all_instream(self, node, upstream):
         open_set = set([node])
@@ -37,9 +47,10 @@ class Graph():
         while open_set:
             node = open_set.pop()
             if upstream:
-                add_nodes = [a for a, b in self.edges if b == node]
+                add_nodes = [source for source in self.edges
+                             if node in self.edges[source]]
             else:
-                add_nodes = [b for a, b in self.edges if a == node]
+                add_nodes = self.edges[node].keys()
             closed_set.update(add_nodes)
             open_set.update(add_nodes)
         return closed_set
