@@ -11,6 +11,8 @@ __email__ = "filippo.corradino@gmail.com"
 
 import re
 from collections import namedtuple
+from enum import Enum
+from itertools import product
 
 
 class Graph():
@@ -38,7 +40,7 @@ class Graph():
     def remove_node(self, node):
         del self.nodes[node]
         del self.edges[node]
-        for edge in edges:
+        for edge in self.edges:
             edge.pop(node)  # Works also if node is not there
 
     def _find_all_instream(self, node, upstream):
@@ -60,6 +62,57 @@ class Graph():
 
     def find_all_upstream(self, node):
         return self._find_all_instream(node, upstream=True)
+
+
+class Grid(Graph):
+
+    Neighbourhood = Enum('Neighbourhood', 'MOORE VON_NEUMANN')
+
+    def __init__(self, dimensions, values=lambda x: None,
+                 neighbourhood=Neighbourhood.MOORE):
+        """For each node, its value is set to values(node_coordinates)
+        """
+        super().__init__()
+        for coordinate in product(*(range(d) for d in dimensions)):
+            self.add_node(coordinate, values(coordinate))
+        # Case #1: von Neumann neighbourhood
+        if neighbourhood == self.Neighbourhood.VON_NEUMANN:
+            variations = []
+            for i in range(len(dimensions)):
+                for step in (-1, +1):
+                    variations.append(tuple(step*(i == j)
+                                            for j in range(len(dimensions))))
+        # Case #2: Moore neighbourhood
+        elif neighbourhood == self.Neighbourhood.MOORE:
+            variations = list(product((-1, 0, +1), repeat=len(dimensions)))
+        # Case #N: Unrecognized neighbourhood
+        else:
+            raise ValueError(f"Unrecognized neighbourhood: {neighbourhood}")
+        # Add edges to neighbours for each node
+        for node in self.nodes:
+            for variation in variations:
+                neighbour = tuple(x + v for x, v in zip(node, variation))
+                if all(0 <= x < d for x, d in zip(neighbour, dimensions)):
+                    if neighbour != node:
+                        self.add_edge(node, neighbour)
+
+    @classmethod
+    def from_nested_sequences(cls, main_sequence, depth,
+                              values_map=lambda x: None,
+                              neighbourhood=Neighbourhood.MOORE):
+        """For each node, its value is set to values_map(sequences_value)
+        """
+        def values(coordinates):
+            v = main_sequence
+            for x in coordinates:
+                v = v[x]
+            return values_map(v)
+        dimensions = []
+        sub_sequence = main_sequence
+        for _ in range(depth):
+            dimensions.append(len(sub_sequence))
+            sub_sequence = sub_sequence[0]
+        return cls(tuple(dimensions), values, neighbourhood)
 
 
 class Processor():
