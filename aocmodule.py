@@ -11,6 +11,7 @@ __email__ = "filippo.corradino@gmail.com"
 
 import os
 import re
+from collections import deque
 from enum import Enum
 from itertools import product
 
@@ -213,6 +214,60 @@ class GollyAutomaton(CellularAutomaton):
     def parse_rule(rule):
         match = re.fullmatch(r'B(\d+)\/S(\d+)', rule)
         return [[int(n) for n in group] for group in match.groups()]
+
+
+class GridWalker():
+
+    Directions = Enum('Direction', 'NORTH EAST SOUTH WEST')
+
+    def __init__(self, starting_direction=None, starting_position=(0, 0)):
+        directions = (self.Directions.NORTH, self.Directions.EAST,
+                      self.Directions.SOUTH, self.Directions.WEST)
+        versors = (complex(0, +1), complex(+1, 0),
+                   complex(0, -1), complex(-1, 0))
+        self.versor_map = {k: v for k, v in zip(directions, versors)}
+        # Circular list with main directions in CW order (NESW)
+        self.orientation = deque(directions)
+        self._position = complex(*starting_position)
+        if starting_direction:
+            # Defaults to North if unset
+            while self.orientation[0] != starting_direction:
+                self._turn_cw()
+
+    @property
+    def position(self):
+        return (int(self._position.real), int(self._position.imag))
+
+    def _turn_cw(self, steps=1):
+        # This rotates the walker CW by a certain number of steps
+        self.orientation.rotate(steps)
+
+    def turn_left(self, steps=1):
+        self._turn_cw(steps)
+
+    def turn_right(self, steps=1):
+        self._turn_cw(-steps)
+
+    def advance(self, steps=1):
+        self.move(self.heading(), steps)
+
+    def move(self, direction, steps=1):
+        try:
+            self._position += steps * self.versor_map[direction]
+        except KeyError:
+            self._position += steps * complex(*direction)
+
+    def heading(self):
+        return self.orientation[0]
+
+    def _arc_cw(self, quarters=1):
+        self._position = self._position * 1j**quarters
+
+    def arc_left(self, quarters=1):
+        self._arc_cw(quarters)
+
+    def arc_right(self, quarters=1):
+        self._arc_cw(-quarters)
 
 
 class Processor():
