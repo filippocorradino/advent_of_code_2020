@@ -9,8 +9,8 @@ __author__ = "Filippo Corradino"
 __email__ = "filippo.corradino@gmail.com"
 
 
+import os
 import re
-from collections import namedtuple
 from enum import Enum
 from itertools import product
 
@@ -25,17 +25,23 @@ class Graph():
         self.nodes = {}
         self.edges = {}
 
+    def __getitem__(self, key):
+        return self.nodes[key]
+
+    def __setitem__(self, key, value):
+        self.nodes[key] = value
+
     def add_node(self, node, value=None):
         self.nodes[node] = value
         self.edges[node] = {}
 
-    def add_edge(self, nodeA, nodeB, cost=1, two_ways=False):
+    def add_edge(self, nodeA, nodeB, weight=1, two_ways=False):
         for node in (nodeA, nodeB):
             if node not in self.nodes:
                 self.add_node(node)  # Default to a None-valued node
-        self.edges[nodeA][nodeB] = cost
+        self.edges[nodeA][nodeB] = weight
         if two_ways:
-            self.edges[nodeB][nodeA] = cost
+            self.edges[nodeB][nodeA] = weight
 
     def remove_node(self, node):
         del self.nodes[node]
@@ -68,19 +74,23 @@ class Grid(Graph):
 
     Neighbourhood = Enum('Neighbourhood', 'MOORE VON_NEUMANN')
 
-    def __init__(self, dimensions, values=lambda x: None,
+    def __init__(self, dimensions, values_map=lambda x: None,
                  neighbourhood=Neighbourhood.MOORE):
-        """For each node, its value is set to values(node_coordinates)
+        """For each node, its value is set to values_map(node_coordinates)
         """
         super().__init__()
+        if len(dimensions) < 2:
+            # TODO: manage edge cases with 1D grid
+            raise ValueError("'dimensions' must have at least 2 elements")
+        self.dimensions = dimensions
         for coordinate in product(*(range(d) for d in dimensions)):
-            self.add_node(coordinate, values(coordinate))
+            self.add_node(coordinate, values_map(coordinate))
         # Case #1: von Neumann neighbourhood
         if neighbourhood == self.Neighbourhood.VON_NEUMANN:
             variations = []
             for i in range(len(dimensions)):
                 for step in (-1, +1):
-                    variations.append(tuple(step*(i == j)
+                    variations.append(tuple(step * (i == j)
                                             for j in range(len(dimensions))))
         # Case #2: Moore neighbourhood
         elif neighbourhood == self.Neighbourhood.MOORE:
@@ -93,17 +103,26 @@ class Grid(Graph):
             for variation in variations:
                 neighbour = tuple(x + v for x, v in zip(node, variation))
                 if all(0 <= x < d for x, d in zip(neighbour, dimensions)):
-                    if neighbour != node:
+                    if neighbour in self.nodes and neighbour != node:
                         self.add_edge(node, neighbour)
 
     @classmethod
     def from_nested_sequences(cls, main_sequence, depth,
-                              values_map=lambda x: None,
-                              neighbourhood=Neighbourhood.MOORE):
-        """For each node, its value is set to values_map(sequences_value)
+                              values_map=lambda x: x,
+                              neighbourhood=Neighbourhood.MOORE,
+                              inverse_order=False):
+        """Can generate a grid from input data such as:
+        ((1, 2, 3), (4, 5, 6))
+        [[1, 2, 3], [4, 5, 6]]
+        Sub-sequences at a given level must all be of the same size!
+        For each node, its value is set to values_map(sequences_value)
+        If inverse_order is True, the innermost subsequence is on the first axis
+        (e.g. the sequence above would turn in a (3, 2) grid instead of (2, 3))
         """
         def values(coordinates):
             v = main_sequence
+            if inverse_order:
+                coordinates = reversed(coordinates)
             for x in coordinates:
                 v = v[x]
             return values_map(v)
@@ -112,7 +131,88 @@ class Grid(Graph):
         for _ in range(depth):
             dimensions.append(len(sub_sequence))
             sub_sequence = sub_sequence[0]
+        if inverse_order:
+            dimensions = reversed(dimensions)
         return cls(tuple(dimensions), values, neighbourhood)
+
+    def _2Dsection(self, outer_indices):
+        lines = []
+        for y in range(self.dimensions[1]):
+            lines.append(''.join(str(self[(x, y, *outer_indices)])
+                         for x in range(self.dimensions[0])))
+        return '\n'.join(lines)
+
+    def __str__(self):
+        if len(self.dimensions) == 1:
+            # Unused now, will be used when we extend to 1D grids
+            return ''.join(str(self[x] for x in range(self.dimensions[0])))
+        slices = []
+        outer_dimensions = self.dimensions[2:]
+        for outer_indices in product(*(range(d) for d in outer_dimensions)):
+            if outer_dimensions:
+                slices.append('\n'.join((str(outer_indices),
+                                        self._2Dsection(outer_indices))))
+            else:
+                slices.append(self._2Dsection(outer_indices))
+        return '\n\n'.join(slices)
+
+
+class CellularAutomaton():
+    """
+    Must be based on a Graph object to define nodes and neighbours.
+    rule must receive as input the cell value and a list of neighbours values,
+    and return the next value of the cell.
+    Only isotropic automata are supported for now.
+    The space must be initialized with the initial cell values as node values.
+    """
+
+    def __init__(self, space, rule):
+        self.space = space
+        self.rule = rule
+        self.cell_engines = \
+            [self.step_cell(cell) for cell in self.space.nodes.keys()]
+        self.generation = self.step()  # Calling next(generation) steps the CA
+
+    def step_cell(self, cell):
+        # Quasi-coroutine
+        neighbours_addresses = self.space.edges[cell].keys()
+        while True:
+            state = self.space.nodes[cell]
+            neighbours = [self.space.nodes[x] for x in neighbours_addresses]
+            yield  # End phase 1 - assess
+            self.space.nodes[cell] = self.rule(state, neighbours)
+            yield  # End phase 2 - update
+
+    def step(self):
+        while True:
+            for engine in self.cell_engines:
+                next(engine)  # Phase 1 - assess (get state and neighbours)
+            for engine in self.cell_engines:
+                next(engine)  # Phase 2 - update (propagate next step)
+            yield None
+
+
+class GollyAutomaton(CellularAutomaton):
+    """
+    Cellular automaton supporting rules in Golly form (e.g. Life: B3/S23)
+    """
+
+    def __init__(self, space, rule):
+        self.birth, self.survive = self.parse_rule(rule)
+
+        def golly_rule(cell_value, neighbours_values):
+            if cell_value == 0 and sum(neighbours_values) in self.birth:
+                return 1
+            if cell_value == 1 and sum(neighbours_values) in self.survive:
+                return 1
+            return 0
+
+        super().__init__(space, golly_rule)
+
+    @staticmethod
+    def parse_rule(rule):
+        match = re.fullmatch(r'B(\d+)\/S(\d+)', rule)
+        return [[int(n) for n in group] for group in match.groups()]
 
 
 class Processor():
@@ -181,3 +281,52 @@ class Processor():
                 raise self.InfiniteLoop(f"Infinite Loop detected at {self.ip}")
         except IndexError:
             raise self.IPOverflow(f"Instruction Pointer overflow to {self.ip}")
+
+
+class Display():
+
+    def __init__(self, symbol_dict={}, default_pixel=0):
+        self.symbol_dict = symbol_dict
+        self.default_pixel = default_pixel
+        self.pixels = {}
+        self.size = None
+
+    @staticmethod
+    def clear():
+        os.system('cls' if os.name == 'nt' else 'clear')
+
+    def set_size(self, size):
+        self.size = size
+
+    def update(self, pixels):
+        self.pixels.update(pixels)
+
+    def show(self, legend='', clear=True):
+        min_x = min((x for (x, y) in self.pixels))
+        min_y = min((y for (x, y) in self.pixels))
+        if self.size:
+            max_x = min_x + self.size[0]
+            max_y = min_y + self.size[1]
+        else:
+            max_x = max((x for (x, y) in self.pixels))
+            max_y = max((y for (x, y) in self.pixels))
+        # Reconstruct all symbol values
+        rows = []
+        for y in range(min_y, max_y + 1):
+            row = []
+            for x in range(min_x, max_x + 1):
+                try:
+                    row.append(self.pixels[(x, y)])
+                except KeyError:
+                    row.append(self.default_pixel)
+            rows.append(row)
+        # Display
+        output = '\n'.join((''.join((self.symbol_dict[j]) for j in row)
+                            for row in rows))
+        if clear:
+            self.clear()
+        print("\n{0}\n{1}\n".format(output, legend))
+
+    def refresh(self, pixels, legend='', clear=True):
+        self.update(pixels)
+        self.show(legend=legend, clear=True)

@@ -18,13 +18,21 @@ Next year I'll try out Rust, perhaps
 | **[08](https://adventofcode.com/2020/day/8)**  | [⭐](day08_1.py) | [⭐](day08_2.py) |
 | **[09](https://adventofcode.com/2020/day/9)**  | [⭐](day09_1.py) | [⭐](day09_2.py) |
 | **[10](https://adventofcode.com/2020/day/10)** | [⭐](day10_1.py) | [⭐](day10_2.py) |
-| **[11](https://adventofcode.com/2020/day/10)** |||
-| **[12](https://adventofcode.com/2020/day/10)** |||
-| **[13](https://adventofcode.com/2020/day/10)** | [⭐](day13_1.py) | [⭐](day13_2.py) |
-| **[14](https://adventofcode.com/2020/day/10)** |||
-| **[15](https://adventofcode.com/2020/day/10)** |||
-| **[16](https://adventofcode.com/2020/day/10)** |||
-| **[17](https://adventofcode.com/2020/day/10)** |||
+| **[11](https://adventofcode.com/2020/day/11)** | [⭐](day11_1.py) | [⭐](day11_2.py) |
+| **[12](https://adventofcode.com/2020/day/12)** |||
+| **[13](https://adventofcode.com/2020/day/13)** | [⭐](day13_1.py) | [⭐](day13_2.py) |
+| **[14](https://adventofcode.com/2020/day/14)** |||
+| **[15](https://adventofcode.com/2020/day/15)** |||
+| **[16](https://adventofcode.com/2020/day/16)** |||
+| **[17](https://adventofcode.com/2020/day/17)** |||
+| **[18](https://adventofcode.com/2020/day/18)** |||
+| **[19](https://adventofcode.com/2020/day/19)** |||
+| **[20](https://adventofcode.com/2020/day/20)** |||
+| **[21](https://adventofcode.com/2020/day/21)** |||
+| **[22](https://adventofcode.com/2020/day/22)** |||
+| **[23](https://adventofcode.com/2020/day/23)** |||
+| **[24](https://adventofcode.com/2020/day/24)** |||
+| **[25](https://adventofcode.com/2020/day/25)** |||
 
 Click on the ⭐ to go to the solution script  
 
