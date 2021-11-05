@@ -41,7 +41,9 @@ class TestResults(unittest.TestCase):
                  'day13_1': 4938,
                  'day13_2': 230903629977901,
                  'day14_1': 8566770985168,
-                 'day14_2': 4832039794082}
+                 'day14_2': 4832039794082,
+                 'day15_1': 610,
+                 'day15_2': 1407}
 
     def test_results(self):
         """
