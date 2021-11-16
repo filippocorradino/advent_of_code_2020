@@ -14,9 +14,9 @@ __email__ = "filippo.corradino@gmail.com"
 def input_parser(ifile):
     with open(ifile) as file:
         for line in file:
-            lhs, rhs = line.split(' = ')
+            lhs, rhs = line.strip().split(' = ')
             if lhs == 'mask':
-                mask = rhs[:-1]  # Remove final \n
+                mask = rhs
                 mask_not0 = int(mask.replace('X', '1'), 2) & ((1 << 36) - 1)
                 mask_all1 = int(mask.replace('X', '0'), 2)
             else:

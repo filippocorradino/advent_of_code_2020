@@ -24,7 +24,6 @@ def get_adapter_chain_diff(ifile):
 def main(ifile='inputs/day_10_input.txt'):
     differences = get_adapter_chain_diff(ifile)
     result = differences.count(1) * differences.count(3)
-    print(differences)
     print(f"\nThe product of the 1 and 3 differences is: {result}\n")
     return result
 

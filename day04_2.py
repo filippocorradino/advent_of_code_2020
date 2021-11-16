@@ -44,8 +44,7 @@ def main(ifile='inputs/day_04_input.txt'):
              make_rule(re.compile(r'eyr:(\d{4})(\s|$)'), 2020, 2030),
              or_rules(
                  make_rule(re.compile(r'hgt:(\d+)cm(\s|$)'), 150, 193),
-                 make_rule(re.compile(r'hgt:(\d+)in(\s|$)'), 59, 76)
-                 ),
+                 make_rule(re.compile(r'hgt:(\d+)in(\s|$)'), 59, 76)),
              make_rule(re.compile(r'hcl:#[0-9,a-f]{6}(\s|$)')),
              make_rule(re.compile(r'ecl:(amb|blu|brn|gry|grn|hzl|oth)(\s|$)')),
              make_rule(re.compile(r'pid:\d{9}(\s|$)'))]

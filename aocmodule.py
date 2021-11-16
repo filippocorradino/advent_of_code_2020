@@ -384,4 +384,4 @@ class Display():
 
     def refresh(self, pixels, legend='', clear=True):
         self.update(pixels)
-        self.show(legend=legend, clear=True)
+        self.show(legend=legend, clear=clear)
