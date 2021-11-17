@@ -84,28 +84,34 @@ class Grid(Graph):
             # TODO: manage edge cases with 1D grid
             raise ValueError("'dimensions' must have at least 2 elements")
         self.dimensions = dimensions
+        self.neighbourhood = neighbourhood
+        self.borders = set()
         for coordinate in product(*(range(d) for d in dimensions)):
             self.add_node(coordinate, values_map(coordinate))
         # Case #1: von Neumann neighbourhood
-        if neighbourhood == self.Neighbourhood.VON_NEUMANN:
+        if self.neighbourhood == self.Neighbourhood.VON_NEUMANN:
             variations = []
             for i in range(len(dimensions)):
                 for step in (-1, +1):
                     variations.append(tuple(step * (i == j)
                                             for j in range(len(dimensions))))
         # Case #2: Moore neighbourhood
-        elif neighbourhood == self.Neighbourhood.MOORE:
+        elif self.neighbourhood == self.Neighbourhood.MOORE:
             variations = list(product((-1, 0, +1), repeat=len(dimensions)))
         # Case #N: Unrecognized neighbourhood
         else:
+            self.neighbourhood = None
             raise ValueError(f"Unrecognized neighbourhood: {neighbourhood}")
         # Add edges to neighbours for each node
+        variations.remove((0,) * len(dimensions))  # discard neighbour = node
         for node in self.nodes:
             for variation in variations:
                 neighbour = tuple(x + v for x, v in zip(node, variation))
-                if all(0 <= x < d for x, d in zip(neighbour, dimensions)):
-                    if neighbour in self.nodes and neighbour != node:
-                        self.add_edge(node, neighbour)
+                if neighbour in self.nodes:
+                    self.add_edge(node, neighbour)
+                else:
+                    # Borders defined as nodes with incomplete neighbourhood
+                    self.borders.add(node)
 
     @classmethod
     def from_nested_sequences(cls, main_sequence, depth,
@@ -157,6 +163,21 @@ class Grid(Graph):
                 slices.append(self._2Dsection(outer_indices))
         return '\n\n'.join(slices)
 
+    def expand(self, n, values_map=lambda x: None):
+        """Returns a new grid expanded by n cells in every direction
+        For each new node, its value is set to values_map(coordinates),
+        using the new grid coordinate system
+        NOTE: old grid coordinates all get increased by n
+        """
+        def values(coordinates):
+            old_coordinates = tuple(x - n for x in coordinates)
+            try:
+                return self.nodes[old_coordinates]
+            except KeyError:
+                return values_map(coordinates)
+        dimensions = [x + 2*n for x in self.dimensions]
+        return self.__class__(tuple(dimensions), values, self.neighbourhood)
+
 
 class CellularAutomaton():
     """
@@ -171,10 +192,10 @@ class CellularAutomaton():
         self.space = space
         self.rule = rule
         self.cell_engines = \
-            [self.step_cell(cell) for cell in self.space.nodes.keys()]
-        self.generation = self.step()  # Calling next(generation) steps the CA
+            [self._step_cell(cell) for cell in self.space.nodes.keys()]
+        self.generation = self._step()  # Calling next(generation) steps the CA
 
-    def step_cell(self, cell):
+    def _step_cell(self, cell):
         # Quasi-coroutine
         neighbours_addresses = self.space.edges[cell].keys()
         while True:
@@ -184,13 +205,17 @@ class CellularAutomaton():
             self.space.nodes[cell] = self.rule(state, neighbours)
             yield  # End phase 2 - update
 
-    def step(self):
+    def _step(self):
         while True:
             for engine in self.cell_engines:
                 next(engine)  # Phase 1 - assess (get state and neighbours)
             for engine in self.cell_engines:
                 next(engine)  # Phase 2 - update (propagate next step)
             yield None
+
+    def step(self):
+        # Alternative to step the CA
+        next(self.generation)
 
 
 class GollyAutomaton(CellularAutomaton):
