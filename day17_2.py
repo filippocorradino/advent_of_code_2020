@@ -15,7 +15,7 @@ from day17_1 import hypergolly
 
 
 def main(ifile='inputs/day_17_input.txt'):
-    x = hypergolly(ifile, cycles=6, dimensions=4)
+    x = hypergolly(ifile, rule='B3/S23', cycles=6, dimensions=4)
     print(f"\nThe number of live cells is {x}\n")
     return x
 

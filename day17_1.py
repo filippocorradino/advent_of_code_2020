@@ -14,11 +14,10 @@ __email__ = "filippo.corradino@gmail.com"
 from aocmodule import Grid, GollyAutomaton
 
 
-def run(space, n_steps):
-    rule = 'B3/S23'
+def run(space, rule, cycles):
     automaton = GollyAutomaton(space, rule)
-    while n_steps:
-        n_steps -= 1
+    while cycles:
+        cycles -= 1
         if any(automaton.space.nodes[x] for x in automaton.space.borders):
             # Live cells have reached the border, extend
             # (Shouldn't happen with pre-expansion)
@@ -28,7 +27,7 @@ def run(space, n_steps):
     return space
 
 
-def hypergolly(ifile, cycles, dimensions):
+def hypergolly(ifile, rule, cycles, dimensions):
     symbol_dict = {'.': 0, '#': 1}
     with open(ifile) as file:
         initial_slice = file.read().splitlines()
@@ -38,12 +37,12 @@ def hypergolly(ifile, cycles, dimensions):
                                        inverse_order=True,
                                        values_map=lambda x: symbol_dict[x])
     space = space.expand(cycles, lambda _: 0)  # Pre-expand by c * cycles
-    space = run(space, cycles)
+    space = run(space, rule, cycles)
     return sum(space.nodes.values())
 
 
 def main(ifile='inputs/day_17_input.txt'):
-    x = hypergolly(ifile, cycles=6, dimensions=3)
+    x = hypergolly(ifile, rule='B3/S23', cycles=6, dimensions=3)
     print(f"\nThe number of live cells is {x}\n")
     return x
 
