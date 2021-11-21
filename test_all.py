@@ -9,6 +9,8 @@ Simple test script, nothing fancy
 __author__ = "Filippo Corradino"
 __email__ = "filippo.corradino@gmail.com"
 
+
+from importlib import import_module
 import unittest
 
 
@@ -58,7 +60,7 @@ class TestResults(unittest.TestCase):
         for script in self.solutions:
             print("Testing {0}.py...".format(script))
             with self.subTest(i=script):
-                module = __import__(script)
+                module = import_module(script)
                 self.assertEqual(module.main(), self.solutions[script])
         print("All done")
 
