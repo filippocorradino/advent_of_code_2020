@@ -28,7 +28,7 @@ Next year I'll try out Rust, perhaps
 | **[18](https://adventofcode.com/2020/day/18)** | [⭐](day18_1.py) | [⭐](day18_2.py) |
 | **[19](https://adventofcode.com/2020/day/19)** |||
 | **[20](https://adventofcode.com/2020/day/20)** |||
-| **[21](https://adventofcode.com/2020/day/21)** |||
+| **[21](https://adventofcode.com/2020/day/21)** | [⭐](day21_1.py) | [⭐](day21_2.py) |
 | **[22](https://adventofcode.com/2020/day/22)** |||
 | **[23](https://adventofcode.com/2020/day/23)** |||
 | **[24](https://adventofcode.com/2020/day/24)** |||
