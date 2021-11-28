@@ -53,7 +53,9 @@ class TestResults(unittest.TestCase):
                  'day18_1': 209335026987,
                  'day18_2': 33331817392479,
                  'day21_1': 2569,
-                 'day21_2': 'vmhqr,qxfzc,khpdjv,gnrpml,xrmxxvn,rfmvh,rdfr,jxh'}
+                 'day21_2': 'vmhqr,qxfzc,khpdjv,gnrpml,xrmxxvn,rfmvh,rdfr,jxh',
+                 'day22_1': 32448,
+                 'day22_2': 32949}
 
     def test_results(self):
         """
