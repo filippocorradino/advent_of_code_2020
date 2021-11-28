@@ -2,7 +2,7 @@
 Advent of Code 2020 - Utilities Module
 https://adventofcode.com/2020/
 
-PEP 8 compliant
+TODO: refactor Graphs, Grids, and Cellular Automata to support "sparse" versions
 """
 
 __author__ = "Filippo Corradino"
@@ -244,16 +244,18 @@ class GollyAutomaton(CellularAutomaton):
 class GridWalker():
 
     Directions = Enum('Direction', 'NORTH EAST SOUTH WEST')
+    default_versor_map = {Directions.NORTH: complex(0, +1),
+                          Directions.EAST: complex(+1, 0),
+                          Directions.SOUTH: complex(0, -1),
+                          Directions.WEST: complex(-1, 0)}
 
-    def __init__(self, starting_direction=None, starting_position=(0, 0)):
-        directions = (self.Directions.NORTH, self.Directions.EAST,
-                      self.Directions.SOUTH, self.Directions.WEST)
-        versors = (complex(0, +1), complex(+1, 0),
-                   complex(0, -1), complex(-1, 0))
-        self.versor_map = {k: v for k, v in zip(directions, versors)}
+    def __init__(self, starting_direction=None, starting_position=(0, 0),
+                 cw_complex_versor_map=default_versor_map):
+        self.versor_map = cw_complex_versor_map
         # Circular list with main directions in CW order (NESW)
-        self.orientation = deque(directions)
-        self._position = complex(*starting_position)
+        self.orientation = deque(self.versor_map.keys())
+        self.starting_position = starting_position
+        self.reset()
         if starting_direction:
             # Defaults to North if unset
             while self.orientation[0] != starting_direction:
@@ -262,6 +264,11 @@ class GridWalker():
     @property
     def position(self):
         return (int(self._position.real), int(self._position.imag))
+
+    def reset(self, position=None):
+        if position is None:
+            position = self.starting_position
+        self._position = complex(*position)
 
     def _turn_cw(self, steps=1):
         # This rotates the walker CW by a certain number of steps
