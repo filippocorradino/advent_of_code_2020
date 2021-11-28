@@ -40,10 +40,10 @@ def run(floorplan, cycles, rule='B2/S12'):
     return floorplan
 
 
-def main(ifile='inputs/day_24_input.txt'):
-    n_turned_tiles = len(run(floorplan(ifile), cycles=100))
-    print(f"\nA total of {n_turned_tiles} tiles have been turned\n")
-    return n_turned_tiles
+def main(ifile='inputs/day_24_input.txt', cycles=100):
+    n_black_tiles = len(run(floorplan(ifile), cycles))
+    print(f"\nA total of {n_black_tiles} tiles are black after {cycles} days\n")
+    return n_black_tiles
 
 
 if __name__ == "__main__":
