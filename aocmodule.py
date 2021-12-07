@@ -16,6 +16,10 @@ from enum import Enum
 from itertools import product
 
 
+def sumtuple(a, b):
+    return tuple(x + y for x, y in zip(a, b))
+
+
 class Graph():
     """
     nodes is a dict {node_i: node_i_value}
@@ -106,7 +110,7 @@ class Grid(Graph):
         variations.remove((0,) * len(dimensions))  # discard neighbour = node
         for node in self.nodes:
             for variation in variations:
-                neighbour = tuple(x + v for x, v in zip(node, variation))
+                neighbour = sumtuple(node, variation)
                 if neighbour in self.nodes:
                     self.add_edge(node, neighbour)
                 else:

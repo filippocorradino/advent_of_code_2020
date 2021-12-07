@@ -52,6 +52,8 @@ class TestResults(unittest.TestCase):
                  'day17_2': 1524,
                  'day18_1': 209335026987,
                  'day18_2': 33331817392479,
+                 'day20_1': 59187348943703,
+                 'day20_2': 1565,
                  'day21_1': 2569,
                  'day21_2': 'vmhqr,qxfzc,khpdjv,gnrpml,xrmxxvn,rfmvh,rdfr,jxh',
                  'day22_1': 32448,
