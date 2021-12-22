@@ -60,6 +60,8 @@ class TestResults(unittest.TestCase):
                  'day21_2': 'vmhqr,qxfzc,khpdjv,gnrpml,xrmxxvn,rfmvh,rdfr,jxh',
                  'day22_1': 32448,
                  'day22_2': 32949,
+                 'day23_1': 25468379,
+                 'day23_2': 474747880250,
                  'day24_1': 373,
                  'day24_2': 3917}
 
