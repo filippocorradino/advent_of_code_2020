@@ -42,3 +42,6 @@ Click on the ⭐ to go to the solution script
 * Readability and versatility over efficiency
 * No dependencies outside standard library
 * Finish AoC 2020 before AoC 2021 (each Day of 2020 before the corresponding Day of 2021)
+
+Mission accomplished!
+Merry Christmas 2020! (Just 1 year late)
