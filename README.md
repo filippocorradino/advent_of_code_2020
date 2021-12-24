@@ -33,7 +33,7 @@ Next year I'll try out Rust, perhaps
 | **[22](https://adventofcode.com/2020/day/22)** | [⭐](day22_1.py) | [⭐](day22_2.py) |
 | **[23](https://adventofcode.com/2020/day/23)** | [⭐](day23_1.py) | [⭐](day23_2.py) |
 | **[24](https://adventofcode.com/2020/day/24)** | [⭐](day24_1.py) | [⭐](day24_2.py) |
-| **[25](https://adventofcode.com/2020/day/25)** |||
+| **[25](https://adventofcode.com/2020/day/25)** | [⭐](day25.py) | [⭐](day25.py) |
 
 Click on the ⭐ to go to the solution script  
 
